@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 
-import 'package:kontak/models/fav_contact.dart';
+import 'package:kontak/models/fav_model.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   DatabaseHelper._privateConstructor();
@@ -14,7 +14,7 @@ class DatabaseHelper {
 
   Future<Database> _initDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, 'favcontacts.db');
+    String path = join(documentsDirectory.path, 'fav_contact.db');
     return await openDatabase(
       path,
       version: 1,
@@ -24,7 +24,7 @@ class DatabaseHelper {
 
   Future _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE contacts(
+      CREATE TABLE favorite (
           id INTEGER PRIMARY KEY,
           name TEXT,
           phone TEXT,
@@ -35,30 +35,29 @@ class DatabaseHelper {
       ''');
   }
 
-  Future<List<FavContact>> getGroceries() async {
+  Future<List<FavModel>> getFavContact() async {
     Database db = await instance.database;
-    var contactLists = await db.query('favcontacts', orderBy: 'name');
-    List<FavContact> favContactList = contactLists.isNotEmpty
-        ? contactLists.map((c) => FavContact.fromMap(c)).toList()
+    var favorite = await db.query('favorite', orderBy: 'name');
+    List<FavModel> favContactList = favorite.isNotEmpty
+        ? favorite.map((c) => FavModel.fromMap(c)).toList()
         : [];
     return favContactList;
   }
 
-  Future<int> add(FavContact favContact) async {
+  Future<int> add(FavModel favContact) async {
     Database db = await instance.database;
-    return await db.insert('favcontacts', favContact.toMap());
+    return await db.insert('favorite', favContact.toMap());
+  }
+
+  Future<int> update(FavModel favContact) async {
+    Database db = await instance.database;
+    return await db.update('favorite', favContact.toMap(),
+        where: "id = ?", whereArgs: [favContact.id]);
   }
 
   Future<int> remove(int id) async {
     Database db = await instance.database;
-    return await db.delete('favcontacts', where: 'id = ?', whereArgs: [id]);
+    return await db.delete('favorite', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<int> update(FavContact favContact) async {
-    Database db = await instance.database;
-    return await db.update('favcontacts', favContact.toMap(),
-        where: "id = ?", whereArgs: [favContact.id]);
-  }
 }
-
-
