@@ -5,6 +5,7 @@ class Contact {
   final String email;
   final String company;
   final String job;
+  bool isFav;
 
-  Contact(this.id, this.name, this.phone, this.email, this.company, this.job);
+  Contact(this.id, this.name, this.phone, this.email, this.company, this.job, this.isFav);
 }

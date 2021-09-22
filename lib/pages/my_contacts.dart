@@ -74,41 +74,49 @@ class _MyContactsState extends State<MyContacts> {
             child: ListTile(
               onLongPress: () {
                 Navigator.of(context).pushNamed(DetailContact.nameRoute,
-                          arguments: contactList[index].phone);
+                    arguments: contactList[index].phone);
               },
-                leading: Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xffC4C4C4),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: CachedNetworkImage(
-                    width: 40,
-                    imageUrl:
-                        "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png",
-                    progressIndicatorBuilder:
-                        (context, url, downloadProgress) =>
-                            CircularProgressIndicator(
-                                value: downloadProgress.progress),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
+              leading: Container(
+                decoration: BoxDecoration(
+                    color: Color(0xffC4C4C4),
+                    borderRadius: BorderRadius.circular(20)),
+                child: CachedNetworkImage(
+                  width: 40,
+                  imageUrl:
+                      "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png",
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      CircularProgressIndicator(
+                          value: downloadProgress.progress),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
-                title: Text(contactList[index].name),
-                subtitle: Text(contactList[index].phone),
-                trailing: GestureDetector(
-                    onTap: () async {
-                      await DatabaseHelper.instance.add(
-                      FavModel(
-                          name: contactList[index].name, 
-                          phone: contactList[index].phone, 
-                          email: contactList[index].email, 
-                          company: contactList[index].company, 
-                          job: contactList[index].job),
+              ),
+              title: Text(contactList[index].name),
+              subtitle: Text(contactList[index].phone),
+              trailing: GestureDetector(
+                onTap: () async {
+                  await DatabaseHelper.instance
+                      .add(
+                    FavModel(
+                        name: contactList[index].name,
+                        phone: contactList[index].phone,
+                        email: contactList[index].email,
+                        company: contactList[index].company,
+                        job: contactList[index].job),
+                  )
+                      .then((_) {
+                    contactData.changeIsFav(contactList[index].phone, true);
+                    print("Berhasil menambah favorit");
+                  });
+                  // .catchError((_) => print("Error Tambah Favorit"));
+                },
+                child: contactList[index].isFav
+                    ? Icon(
+                        Icons.grade_sharp,
+                        color: Colors.amber,
                       )
-                  .then((_) => print("Berhasil menambah favorit"))
-                  .catchError((_) => print("Error Tambah Favorit"));
-                    },
-                    child: Image.asset("assets/icons/more1.png"),
-                    ),
-                    ),
+                    : Icon(Icons.grade_outlined),
+              ),
+            ),
           );
         },
       ),

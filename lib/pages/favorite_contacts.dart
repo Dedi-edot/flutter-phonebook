@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:kontak/db/db_helper.dart';
 import 'package:kontak/models/fav_model.dart';
 import 'package:kontak/pages/detail_contact.dart';
+import 'package:kontak/providers/all_contacts.dart';
+import 'package:provider/provider.dart';
 
 class FavoriteContacts extends StatefulWidget {
   const FavoriteContacts({Key? key}) : super(key: key);
@@ -15,6 +17,8 @@ class FavoriteContacts extends StatefulWidget {
 class _FavoriteContactsState extends State<FavoriteContacts> {
   @override
   Widget build(BuildContext context) {
+    final contactData = Provider.of<Contacts>(context);
+    
     return Scaffold(
       backgroundColor: Color(0xffDCDCDC),
       appBar: AppBar(
@@ -86,9 +90,10 @@ class _FavoriteContactsState extends State<FavoriteContacts> {
                               setState(() {
                                 DatabaseHelper.instance.remove(fav.id!);
                               });
+                              contactData.changeIsFav(fav.phone, false);
                               print("berhasil dihapus dari favorit");
                             },
-                            child: Image.asset("assets/icons/more1.png"),
+                            child: Icon(Icons.delete),
                           ),
                         ),
                       );
