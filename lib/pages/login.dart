@@ -1,7 +1,9 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:kontak/pages/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:kontak/models/response_login.dart';
+// import 'package:kontak/models/user.dart';
 // import 'package:kontak/pages/home_page.dart';
 import 'package:kontak/pages/register.dart';
 
@@ -14,29 +16,45 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _controllerEmail;
   late TextEditingController _controllerPassword;
-  bool see = false;
+  bool see = true;
 
-  Future<void> login(String email, String password) async {
-    Map<String, dynamic> map = {
-      "email": email,
-      "password": password
-    };
-String rawJson = jsonEncode(map);
-    print(rawJson);
+  Future login(String email, String password) async {
+    final SharedPreferences prefs = await _prefs;
     String url = "https://phone-book-api.herokuapp.com/api/v1/signin";
     Response response;
     var dio = Dio();
-    response = await dio.post(url,
-        data: rawJson);
-    print(response.data);
+    response =
+        await dio.post(url, data: {"email": email, "password": password});
+
+    Data data = Data.fromJson(response.data["data"]);
+    // print(data.token);
+
+    prefs.setString('token', data.token).then((value) {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(HomePage.nameRoute, (route) => false);
+    });
+  }
+
+  Future autoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final token = prefs.getString('token') ?? 0;
+
+    if (token != 0) {
+      print(token);
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(HomePage.nameRoute, (route) => false);
+    }
   }
 
   @override
   void initState() {
     super.initState();
+    autoLogin();
     _controllerEmail = TextEditingController();
     _controllerPassword = TextEditingController();
   }
@@ -148,7 +166,6 @@ String rawJson = jsonEncode(map);
                         style: ElevatedButton.styleFrom(
                             primary: Color(0xffE94560)),
                         onPressed: () {
-                          print(_controllerEmail.text);
                           if (_formKey.currentState!.validate()) {
                             login(_controllerEmail.text,
                                 _controllerPassword.text);
@@ -156,8 +173,6 @@ String rawJson = jsonEncode(map);
                               const SnackBar(content: Text('Processing Data')),
                             );
                           }
-                          // Navigator.of(context)
-                          //     .pushReplacementNamed(HomePage.nameRoute);
                         },
                         child: Text(
                           "LOGIN",
