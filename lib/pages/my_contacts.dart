@@ -1,11 +1,14 @@
+// import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:kontak/db/db_helper.dart';
 import 'package:kontak/models/fav_model.dart';
+// import 'package:kontak/models/response_get_allcontact.dart';
 import 'package:kontak/providers/all_contacts.dart';
 import 'package:provider/provider.dart';
 import 'package:kontak/pages/detail_contact.dart';
 import 'package:kontak/pages/new_contact.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyContacts extends StatefulWidget {
   const MyContacts({Key? key}) : super(key: key);
@@ -16,6 +19,36 @@ class MyContacts extends StatefulWidget {
 }
 
 class _MyContactsState extends State<MyContacts> {
+  bool isInit = true;
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  Future getContact() async {
+    final SharedPreferences prefs = await _prefs;
+    final token = prefs.getString('token') ?? "0";
+
+    print("Bearer $token");
+
+    if (token != "0") {
+      Provider.of<Contacts>(context, listen: false).initialData(token);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getContact();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (isInit) {
+      print("Sukses");
+      getContact();
+    }
+    isInit = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     final contactData = Provider.of<Contacts>(context);
@@ -82,8 +115,9 @@ class _MyContactsState extends State<MyContacts> {
                     borderRadius: BorderRadius.circular(20)),
                 child: CachedNetworkImage(
                   width: 40,
-                  imageUrl:
-                      "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png",
+                  imageUrl: contactList[index].image != null
+                      ? contactList[index].image
+                      : "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png",
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
                       CircularProgressIndicator(
                           value: downloadProgress.progress),
@@ -100,8 +134,11 @@ class _MyContactsState extends State<MyContacts> {
                         name: contactList[index].name,
                         phone: contactList[index].phone,
                         email: contactList[index].email,
-                        company: contactList[index].company,
-                        job: contactList[index].job),
+                        company: contactList[index].company.toString(),
+                        job: contactList[index].job,
+                        image: contactList[index].image != null
+                            ? contactList[index].image
+                            : "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png"),
                   )
                       .then((_) {
                     contactData.changeIsFav(contactList[index].phone, true);

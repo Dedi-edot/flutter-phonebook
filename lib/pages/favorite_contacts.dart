@@ -73,14 +73,11 @@ class _FavoriteContactsState extends State<FavoriteContacts> {
                                 borderRadius: BorderRadius.circular(20)),
                             child: CachedNetworkImage(
                               width: 40,
-                              imageUrl:
-                                  "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png",
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) =>
-                                      CircularProgressIndicator(
-                                          value: downloadProgress.progress),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
+                              imageUrl: fav.image,
+                              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                  CircularProgressIndicator(
+                                      value: downloadProgress.progress),
+                              errorWidget: (context, url, error) => Icon(Icons.error),
                             ),
                           ),
                           title: Text(fav.name),

@@ -1,11 +1,13 @@
 class Contact {
-  final int id;
-  final String name;
-  final String phone;
-  final String email;
-  final String company;
-  final String job;
+  int? id;
+  final name;
+  final phone;
+  final email;
+  final company;
+  final job;
+  final image;
   bool isFav;
 
-  Contact(this.id, this.name, this.phone, this.email, this.company, this.job, this.isFav);
+  Contact(this.id, this.name, this.phone, this.email, this.company, this.job, this.image,
+      this.isFav);
 }

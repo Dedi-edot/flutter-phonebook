@@ -1,19 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kontak/models/contact.dart';
+import 'package:kontak/models/response_get_allcontact.dart';
 
 class Contacts with ChangeNotifier {
-  List<Contact> _contactList = [
-    Contact(1, 'Andi', '081234567890', 'andi@mail.com', 'Refactory',
-        'Fullstack Engineer', false),
-    Contact(2, 'Budi', '082312345678', 'budi@mail.com', 'Bixbox', 'Desainer',
-        false),
-    Contact(
-        3, 'Bani', '082312345678', 'bani@mail.com', 'Bixbox', 'Backend', false),
-    Contact(
-        4, 'Cacha', '085712345678', 'cacha@mail.com', 'Refactory', 'QA', false),
-    Contact(5, 'Dian', '0899676541234', 'dian@mail.com', 'Bixbox', 'Front End',
-        false),
-  ];
+  List<Contact> _contactList = [];
 
   List<Contact> get contactList {
     return _contactList;
@@ -28,5 +19,28 @@ class Contacts with ChangeNotifier {
         .indexOf(_contactList.firstWhere((element) => element.phone == phone));
     contactList[index].isFav = isFav;
     notifyListeners();
+  }
+
+  Future<void> initialData(String token) async {
+    String url = "https://phone-book-api.herokuapp.com/api/v1/contacts";
+    List<GetContact> allContacts;
+
+    Response response;
+    Dio dio = new Dio();
+    dio.options.headers["Authorization"] = "Bearer $token";
+    response = await dio.get(url);
+
+    allContacts = List<GetContact>.from(
+        response.data["data"].map((x) => GetContact.fromJson(x)));
+
+    if (allContacts.length > 0) {
+      allContacts.forEach((element) {
+        _contactList.add(Contact(element.id, element.name, element.phone,
+            element.email, element.company, element.job, element.image, false));
+      });
+      print("BERHASIL MASUKAN DATA LIST");
+
+      notifyListeners();
+    }
   }
 }

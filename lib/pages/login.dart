@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:kontak/pages/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kontak/models/response_login.dart';
-// import 'package:kontak/models/user.dart';
-// import 'package:kontak/pages/home_page.dart';
 import 'package:kontak/pages/register.dart';
 
 class LoginPage extends StatefulWidget {
@@ -42,9 +40,9 @@ class _LoginPageState extends State<LoginPage> {
   Future autoLogin() async {
     final prefs = await SharedPreferences.getInstance();
 
-    final token = prefs.getString('token') ?? 0;
+    final token = prefs.getString('token') ?? "0";
 
-    if (token != 0) {
+    if (token != "0") {
       print(token);
       Navigator.of(context)
           .pushNamedAndRemoveUntil(HomePage.nameRoute, (route) => false);
