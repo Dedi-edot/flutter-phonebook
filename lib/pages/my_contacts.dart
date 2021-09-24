@@ -17,7 +17,7 @@ class MyContacts extends StatefulWidget {
 }
 
 class _MyContactsState extends State<MyContacts> {
-  bool isInit = true;
+  List<GetContact> favorite = [];
 
   Future getContact() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -34,7 +34,6 @@ class _MyContactsState extends State<MyContacts> {
   @override
   void initState() {
     super.initState();
-    print("Sukses");
     getContact();
   }
 
@@ -42,6 +41,21 @@ class _MyContactsState extends State<MyContacts> {
   Widget build(BuildContext context) {
     final contactData = Provider.of<Contacts>(context);
     final contactList = contactData.contactList;
+    DatabaseHelper.instance
+        .getFavContact()
+        .then((value) => value.forEach((element) {
+              favorite.add(element);
+            }));
+
+    bool isFav(int id) {
+      bool fav = false;
+      favorite.forEach((element) {
+        if (element.id == contactList[id].id) {
+          fav = true;
+        }
+      });
+      return fav;
+    }
 
     return Scaffold(
       backgroundColor: Color(0xffDCDCDC),
@@ -128,18 +142,18 @@ class _MyContactsState extends State<MyContacts> {
                     image: contactList[index].image,
                   ))
                       .then((_) {
-                    // contactData.changeIsFav(contactList[index].phone, true);
+                        setState(() {
+                          getContact();
+                        });
                     print("Berhasil menambah favorit");
                   });
-                  // .catchError((_) => print("Error Tambah Favorit"));
                 },
-                child: Icon(Icons.grade_outlined),
-                // child: contactList[index].isFav
-                //     ? Icon(
-                //         Icons.grade_sharp,
-                //         color: Colors.amber,
-                //       )
-                //     : Icon(Icons.grade_outlined),
+                child: isFav(index)
+                    ? Icon(
+                        Icons.grade_sharp,
+                        color: Colors.amber,
+                      )
+                    : Icon(Icons.grade_outlined),
               ),
             ),
           );
