@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:kontak/models/user.dart';
 import 'package:kontak/pages/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:kontak/models/response_login.dart';
 import 'package:kontak/pages/register.dart';
 
 class LoginPage extends StatefulWidget {
@@ -28,12 +29,11 @@ class _LoginPageState extends State<LoginPage> {
     response =
         await dio.post(url, data: {"email": email, "password": password});
 
-    Data data = Data.fromJson(response.data["data"]);
-    // print(data.token);
+    DataUser data = DataUser.fromJson(response.data["data"]);
 
     prefs.setString('token', data.token).then((value) {
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil(HomePage.nameRoute, (route) => false);
+      Timer(Duration(seconds: 1), () => autoLogin());
+      Navigator.of(context).pushReplacementNamed(HomePage.nameRoute);
     });
   }
 
@@ -168,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                             login(_controllerEmail.text,
                                 _controllerPassword.text);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Processing Data')),
+                              const SnackBar(content: Text('Processing DataUser')),
                             );
                           }
                         },

@@ -52,7 +52,7 @@ class DetailContact extends StatelessWidget {
                       child: CachedNetworkImage(
                         width: 40,
                         imageUrl: contact.image != null
-                            ? contact.image
+                            ? contact.image.toString()
                             : "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png",
                         progressIndicatorBuilder:
                             (context, url, downloadProgress) =>
@@ -64,7 +64,7 @@ class DetailContact extends StatelessWidget {
                     SizedBox(
                       height: 30,
                     ),
-                    Text(contact.name, style: TextStyle(fontSize: 24)),
+                    Text(contact.name.toString(), style: TextStyle(fontSize: 24)),
                     SizedBox(
                       height: 30,
                     ),
@@ -82,7 +82,7 @@ class DetailContact extends StatelessWidget {
                                 width: 20,
                               ),
                               Text(
-                                contact.phone,
+                                contact.phone.toString(),
                                 style: TextStyle(fontSize: 20),
                               )
                             ],
@@ -100,7 +100,7 @@ class DetailContact extends StatelessWidget {
                                 width: 20,
                               ),
                               Text(
-                                contact.company,
+                                contact.company.toString(),
                                 style: TextStyle(fontSize: 20),
                               )
                             ],

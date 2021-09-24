@@ -1,25 +1,24 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kontak/models/contact.dart';
-import 'package:kontak/models/response_get_allcontact.dart';
 
 class Contacts with ChangeNotifier {
-  List<Contact> _contactList = [];
+  List<GetContact> _contactList = [];
 
-  List<Contact> get contactList {
+  List<GetContact> get contactList {
     return _contactList;
   }
 
-  Contact findByPhone(String phone) {
+  GetContact findByPhone(String phone) {
     return _contactList.firstWhere((element) => element.phone == phone);
   }
 
-  void changeIsFav(String phone, bool isFav) {
-    var index = contactList
-        .indexOf(_contactList.firstWhere((element) => element.phone == phone));
-    contactList[index].isFav = isFav;
-    notifyListeners();
-  }
+  // void changeIsFav(String phone, bool isFav) {
+  //   var index = contactList
+  //       .indexOf(_contactList.firstWhere((element) => element.phone == phone));
+  //   contactList[index].isFav = isFav;
+  //   notifyListeners();
+  // }
 
   Future<void> initialData(String token) async {
     String url = "https://phone-book-api.herokuapp.com/api/v1/contacts";
@@ -35,8 +34,7 @@ class Contacts with ChangeNotifier {
 
     if (allContacts.length > 0) {
       allContacts.forEach((element) {
-        _contactList.add(Contact(element.id, element.name, element.phone,
-            element.email, element.company, element.job, element.image, false));
+        _contactList.add(element);
       });
       print("BERHASIL MASUKAN DATA LIST");
 

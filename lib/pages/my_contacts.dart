@@ -1,9 +1,7 @@
-// import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:kontak/db/db_helper.dart';
-import 'package:kontak/models/fav_model.dart';
-// import 'package:kontak/models/response_get_allcontact.dart';
+import 'package:kontak/models/contact.dart';
 import 'package:kontak/providers/all_contacts.dart';
 import 'package:provider/provider.dart';
 import 'package:kontak/pages/detail_contact.dart';
@@ -20,33 +18,24 @@ class MyContacts extends StatefulWidget {
 
 class _MyContactsState extends State<MyContacts> {
   bool isInit = true;
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   Future getContact() async {
+    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
     final SharedPreferences prefs = await _prefs;
     final token = prefs.getString('token') ?? "0";
 
-    print("Bearer $token");
-
     if (token != "0") {
       Provider.of<Contacts>(context, listen: false).initialData(token);
+    } else {
+      print("Bearer $token");
     }
   }
 
   @override
   void initState() {
     super.initState();
+    print("Sukses");
     getContact();
-  }
-
-  @override
-  void didChangeDependencies() {
-    if (isInit) {
-      print("Sukses");
-      getContact();
-    }
-    isInit = false;
-    super.didChangeDependencies();
   }
 
   @override
@@ -116,7 +105,7 @@ class _MyContactsState extends State<MyContacts> {
                 child: CachedNetworkImage(
                   width: 40,
                   imageUrl: contactList[index].image != null
-                      ? contactList[index].image
+                      ? contactList[index].image.toString()
                       : "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png",
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
                       CircularProgressIndicator(
@@ -124,34 +113,33 @@ class _MyContactsState extends State<MyContacts> {
                   errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
-              title: Text(contactList[index].name),
-              subtitle: Text(contactList[index].phone),
+              title: Text(contactList[index].name.toString()),
+              subtitle: Text(contactList[index].phone.toString()),
               trailing: GestureDetector(
                 onTap: () async {
                   await DatabaseHelper.instance
-                      .add(
-                    FavModel(
-                        name: contactList[index].name,
-                        phone: contactList[index].phone,
-                        email: contactList[index].email,
-                        company: contactList[index].company.toString(),
-                        job: contactList[index].job,
-                        image: contactList[index].image != null
-                            ? contactList[index].image
-                            : "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png"),
-                  )
+                      .add(GetContact(
+                    id: contactList[index].id,
+                    name: contactList[index].name,
+                    phone: contactList[index].phone,
+                    email: contactList[index].email,
+                    company: contactList[index].company,
+                    job: contactList[index].job,
+                    image: contactList[index].image,
+                  ))
                       .then((_) {
-                    contactData.changeIsFav(contactList[index].phone, true);
+                    // contactData.changeIsFav(contactList[index].phone, true);
                     print("Berhasil menambah favorit");
                   });
                   // .catchError((_) => print("Error Tambah Favorit"));
                 },
-                child: contactList[index].isFav
-                    ? Icon(
-                        Icons.grade_sharp,
-                        color: Colors.amber,
-                      )
-                    : Icon(Icons.grade_outlined),
+                child: Icon(Icons.grade_outlined),
+                // child: contactList[index].isFav
+                //     ? Icon(
+                //         Icons.grade_sharp,
+                //         color: Colors.amber,
+                //       )
+                //     : Icon(Icons.grade_outlined),
               ),
             ),
           );

@@ -1,10 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:kontak/db/db_helper.dart';
-import 'package:kontak/models/fav_model.dart';
+import 'package:kontak/models/contact.dart';
 import 'package:kontak/pages/detail_contact.dart';
-import 'package:kontak/providers/all_contacts.dart';
-import 'package:provider/provider.dart';
 
 class FavoriteContacts extends StatefulWidget {
   const FavoriteContacts({Key? key}) : super(key: key);
@@ -17,7 +15,7 @@ class FavoriteContacts extends StatefulWidget {
 class _FavoriteContactsState extends State<FavoriteContacts> {
   @override
   Widget build(BuildContext context) {
-    final contactData = Provider.of<Contacts>(context);
+    // final contactData = Provider.of<Contacts>(context);
     
     return Scaffold(
       backgroundColor: Color(0xffDCDCDC),
@@ -48,10 +46,10 @@ class _FavoriteContactsState extends State<FavoriteContacts> {
               ),
             ),
           )),
-      body: FutureBuilder<List<FavModel>>(
+      body: FutureBuilder<List<GetContact>>(
           future: DatabaseHelper.instance.getFavContact(),
           builder:
-              (BuildContext context, AsyncSnapshot<List<FavModel>> snapshot) {
+              (BuildContext context, AsyncSnapshot<List<GetContact>> snapshot) {
             if (!snapshot.hasData) {
               return Center(child: CircularProgressIndicator());
             }
@@ -73,21 +71,21 @@ class _FavoriteContactsState extends State<FavoriteContacts> {
                                 borderRadius: BorderRadius.circular(20)),
                             child: CachedNetworkImage(
                               width: 40,
-                              imageUrl: fav.image,
+                              imageUrl: fav.image.toString(),
                               progressIndicatorBuilder: (context, url, downloadProgress) =>
                                   CircularProgressIndicator(
                                       value: downloadProgress.progress),
                               errorWidget: (context, url, error) => Icon(Icons.error),
                             ),
                           ),
-                          title: Text(fav.name),
-                          subtitle: Text(fav.phone),
+                          title: Text(fav.name.toString()),
+                          subtitle: Text(fav.phone.toString()),
                           trailing: GestureDetector(
                             onTap: () {
                               setState(() {
                                 DatabaseHelper.instance.remove(fav.id!);
                               });
-                              contactData.changeIsFav(fav.phone, false);
+                              // contactData.changeIsFav(fav.phone, false);
                               print("berhasil dihapus dari favorit");
                             },
                             child: Icon(Icons.delete),

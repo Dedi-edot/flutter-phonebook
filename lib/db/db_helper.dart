@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:kontak/models/fav_model.dart';
+import 'package:kontak/models/contact.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -36,21 +36,21 @@ class DatabaseHelper {
       ''');
   }
 
-  Future<List<FavModel>> getFavContact() async {
+  Future<List<GetContact>> getFavContact() async {
     Database db = await instance.database;
     var favorite = await db.query('favorites', orderBy: 'name');
-    List<FavModel> favContactList = favorite.isNotEmpty
-        ? favorite.map((c) => FavModel.fromMap(c)).toList()
+    List<GetContact> favContactList = favorite.isNotEmpty
+        ? favorite.map((c) => GetContact.fromMap(c)).toList()
         : [];
     return favContactList;
   }
 
-  Future<int> add(FavModel favContact) async {
+  Future<int> add(GetContact favContact) async {
     Database db = await instance.database;
     return await db.insert('favorites', favContact.toMap());
   }
 
-  Future<int> update(FavModel favContact) async {
+  Future<int> update(GetContact favContact) async {
     Database db = await instance.database;
     return await db.update('favorites', favContact.toMap(),
         where: "id = ?", whereArgs: [favContact.id]);
