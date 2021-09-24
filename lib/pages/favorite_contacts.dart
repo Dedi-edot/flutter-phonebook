@@ -13,10 +13,10 @@ class FavoriteContacts extends StatefulWidget {
 }
 
 class _FavoriteContactsState extends State<FavoriteContacts> {
+
   @override
   Widget build(BuildContext context) {
-    // final contactData = Provider.of<Contacts>(context);
-    
+
     return Scaffold(
       backgroundColor: Color(0xffDCDCDC),
       appBar: AppBar(
@@ -81,13 +81,13 @@ class _FavoriteContactsState extends State<FavoriteContacts> {
                           title: Text(fav.name.toString()),
                           subtitle: Text(fav.phone.toString()),
                           trailing: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                DatabaseHelper.instance.remove(fav.id!);
-                              });
-                              // contactData.changeIsFav(fav.phone, false);
-                              print("berhasil dihapus dari favorit");
-                            },
+      onTap: () {
+        setState(() {
+          DatabaseHelper.instance.remove(fav.id!);
+        });
+        // contactData.changeIsFav(fav.phone, false);
+        print("berhasil dihapus dari favorit");
+      },
                             child: Icon(Icons.delete),
                           ),
                         ),

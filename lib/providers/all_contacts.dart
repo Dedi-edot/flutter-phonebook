@@ -9,7 +9,7 @@ class Contacts with ChangeNotifier {
     return _contactList;
   }
 
-  GetContact findByPhone(String phone) {
+  findByPhone(String phone) {
     return _contactList.firstWhere((element) => element.phone == phone);
   }
 
@@ -35,11 +35,18 @@ class Contacts with ChangeNotifier {
     }
   }
 
-  // List<GetContact> search(String val) {
-  //   var filteredContact = _contactList.where((contact) {
-  //     contact.name!.contains(val) || contact.phone!.contains(val);
-  //   }) as List<GetContact>;
+  filterContact(String val) {
+    List<GetContact> filteredContact = [];
+    if (val.length > 0) {
+      contactList.forEach((contact) {
+        if (contact.name!.contains(val) || contact.phone!.contains(val)) {
+          filteredContact.add(contact);
+        }
+      });
+      return filteredContact;
+    } else {
+      return contactList;
+    }
+  }
 
-  //   return filteredContact;
-  // }
 }

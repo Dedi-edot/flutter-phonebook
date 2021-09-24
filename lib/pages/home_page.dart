@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kontak/db/db_helper.dart';
+import 'package:kontak/models/contact.dart';
 import 'package:kontak/pages/favorite_contacts.dart';
 import 'package:kontak/pages/my_contacts.dart';
 import 'package:kontak/pages/recent_contact.dart';
@@ -12,6 +14,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<GetContact> favorite = [];
+
   int selectedNavbar = 1;
   List<Widget> navbarPage = [
     RecentContacts(),
@@ -23,6 +27,16 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       selectedNavbar = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    DatabaseHelper.instance
+        .getFavContact()
+        .then((value) => value.forEach((element) {
+              favorite.add(element);
+            }));
   }
   
 

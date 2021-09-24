@@ -20,6 +20,7 @@ class _MyContactsState extends State<MyContacts> {
   List<GetContact> favorite = [];
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _controllerSearch;
+  String textToSearch = "";
 
   Future getContact() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -44,12 +45,14 @@ class _MyContactsState extends State<MyContacts> {
   Widget build(BuildContext context) {
     final contactData = Provider.of<Contacts>(context);
     final contactList = contactData.contactList;
-    List<GetContact> filteredContact = contactList;
+    final filteredContact = contactData.filterContact(textToSearch);
+
     DatabaseHelper.instance
         .getFavContact()
         .then((value) => value.forEach((element) {
               favorite.add(element);
             }));
+
 
     bool isFav(int id) {
       bool fav = false;
@@ -60,13 +63,6 @@ class _MyContactsState extends State<MyContacts> {
       });
       return fav;
     }
-
-    // search(String val) {
-    //   if (val.length > 0) {
-    //     filteredContact = contactList.where((contact) =>
-    //             contact.name!.contains(val) || contact.phone!.contains(val));
-    //   }
-    // }
 
     return Scaffold(
       backgroundColor: Color(0xffDCDCDC),
@@ -100,8 +96,9 @@ class _MyContactsState extends State<MyContacts> {
                   child: TextFormField(
                     controller: _controllerSearch,
                     onChanged: (value) {
-                      // search(value);
-                      print(filteredContact);
+                      setState(() {
+                        textToSearch = value;
+                      });
                     },
                     decoration: InputDecoration(
                       border: InputBorder.none,
