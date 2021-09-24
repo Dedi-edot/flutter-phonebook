@@ -13,13 +13,6 @@ class Contacts with ChangeNotifier {
     return _contactList.firstWhere((element) => element.phone == phone);
   }
 
-  // void changeIsFav(String phone, bool isFav) {
-  //   var index = contactList
-  //       .indexOf(_contactList.firstWhere((element) => element.phone == phone));
-  //   contactList[index].isFav = isFav;
-  //   notifyListeners();
-  // }
-
   Future<void> initialData(String token) async {
     String url = "https://phone-book-api.herokuapp.com/api/v1/contacts";
     List<GetContact> allContacts;
@@ -33,12 +26,20 @@ class Contacts with ChangeNotifier {
         response.data["data"].map((x) => GetContact.fromJson(x)));
 
     if (allContacts.length > 0) {
-      allContacts.forEach((element) {
-        _contactList.add(element);
+      allContacts.forEach((contact) {
+        _contactList.add(contact);
       });
       print("BERHASIL MASUKAN DATA LIST");
 
       notifyListeners();
     }
   }
+
+  // List<GetContact> search(String val) {
+  //   var filteredContact = _contactList.where((contact) {
+  //     contact.name!.contains(val) || contact.phone!.contains(val);
+  //   }) as List<GetContact>;
+
+  //   return filteredContact;
+  // }
 }

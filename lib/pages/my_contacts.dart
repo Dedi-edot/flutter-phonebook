@@ -18,6 +18,8 @@ class MyContacts extends StatefulWidget {
 
 class _MyContactsState extends State<MyContacts> {
   List<GetContact> favorite = [];
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _controllerSearch;
 
   Future getContact() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -34,6 +36,7 @@ class _MyContactsState extends State<MyContacts> {
   @override
   void initState() {
     super.initState();
+    _controllerSearch = TextEditingController();
     getContact();
   }
 
@@ -41,6 +44,7 @@ class _MyContactsState extends State<MyContacts> {
   Widget build(BuildContext context) {
     final contactData = Provider.of<Contacts>(context);
     final contactList = contactData.contactList;
+    List<GetContact> filteredContact = contactList;
     DatabaseHelper.instance
         .getFavContact()
         .then((value) => value.forEach((element) {
@@ -56,6 +60,13 @@ class _MyContactsState extends State<MyContacts> {
       });
       return fav;
     }
+
+    // search(String val) {
+    //   if (val.length > 0) {
+    //     filteredContact = contactList.where((contact) =>
+    //             contact.name!.contains(val) || contact.phone!.contains(val));
+    //   }
+    // }
 
     return Scaffold(
       backgroundColor: Color(0xffDCDCDC),
@@ -84,20 +95,28 @@ class _MyContactsState extends State<MyContacts> {
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(5)),
                 height: 50,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Search contact",
-                    fillColor: Color(0xffBEBEBE),
-                    filled: true,
-                    prefixIcon: Icon(Icons.search),
+                child: Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _controllerSearch,
+                    onChanged: (value) {
+                      // search(value);
+                      print(filteredContact);
+                    },
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Search contact",
+                      fillColor: Color(0xffBEBEBE),
+                      filled: true,
+                      prefixIcon: Icon(Icons.search),
+                    ),
                   ),
                 ),
               ),
             ),
           )),
       body: ListView.separated(
-        itemCount: contactList.length,
+        itemCount: filteredContact.length,
         separatorBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 27),
@@ -110,7 +129,7 @@ class _MyContactsState extends State<MyContacts> {
             child: ListTile(
               onLongPress: () {
                 Navigator.of(context).pushNamed(DetailContact.nameRoute,
-                    arguments: contactList[index].phone);
+                    arguments: filteredContact[index].phone);
               },
               leading: Container(
                 decoration: BoxDecoration(
@@ -118,8 +137,8 @@ class _MyContactsState extends State<MyContacts> {
                     borderRadius: BorderRadius.circular(20)),
                 child: CachedNetworkImage(
                   width: 40,
-                  imageUrl: contactList[index].image != null
-                      ? contactList[index].image.toString()
+                  imageUrl: filteredContact[index].image != null
+                      ? filteredContact[index].image.toString()
                       : "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png",
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
                       CircularProgressIndicator(
@@ -127,24 +146,24 @@ class _MyContactsState extends State<MyContacts> {
                   errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
-              title: Text(contactList[index].name.toString()),
-              subtitle: Text(contactList[index].phone.toString()),
+              title: Text(filteredContact[index].name.toString()),
+              subtitle: Text(filteredContact[index].phone.toString()),
               trailing: GestureDetector(
                 onTap: () async {
                   await DatabaseHelper.instance
                       .add(GetContact(
-                    id: contactList[index].id,
-                    name: contactList[index].name,
-                    phone: contactList[index].phone,
-                    email: contactList[index].email,
-                    company: contactList[index].company,
-                    job: contactList[index].job,
-                    image: contactList[index].image,
+                    id: filteredContact[index].id,
+                    name: filteredContact[index].name,
+                    phone: filteredContact[index].phone,
+                    email: filteredContact[index].email,
+                    company: filteredContact[index].company,
+                    job: filteredContact[index].job,
+                    image: filteredContact[index].image,
                   ))
                       .then((_) {
-                        setState(() {
-                          getContact();
-                        });
+                    setState(() {
+                      getContact();
+                    });
                     print("Berhasil menambah favorit");
                   });
                 },
