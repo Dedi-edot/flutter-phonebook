@@ -44,7 +44,6 @@ class _MyContactsState extends State<MyContacts> {
   @override
   Widget build(BuildContext context) {
     final contactData = Provider.of<Contacts>(context);
-    // final sortContact = contactData.sortContact();
     final contactList = contactData.contactList;
     final filteredContact = contactData.filterContact(textToSearch);
 
@@ -64,8 +63,6 @@ class _MyContactsState extends State<MyContacts> {
       return fav;
     }
 
-    // print("ini\n" + sortContact);
-
     return Scaffold(
       backgroundColor: Color(0xffDCDCDC),
       appBar: AppBar(
@@ -78,8 +75,8 @@ class _MyContactsState extends State<MyContacts> {
                 },
                 icon: Icon(
                   Icons.add_circle,
-                  color: Colors.black,
-                ))
+                  color: Colors.black),
+                ),
           ],
           title: Text(
             "My Contacts",
@@ -117,13 +114,18 @@ class _MyContactsState extends State<MyContacts> {
       body: ListView.builder(
           itemCount: filteredContact.length,
           itemBuilder: (context, index) {
+            final subString = filteredContact[index].name.substring(0, 1);
+
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Text(filteredContact.length.toString()),
-                  Text(filteredContact[index].name.substring(0, 1)),
+                  filteredContact[index].id == filteredContact[0].id 
+                    ? Text(subString)
+                    : subString != filteredContact[index - 1].name.substring(0, 1) 
+                      ? Text(subString)
+                      : SizedBox(),
                   ListTile(
                     onLongPress: () {
                       Navigator.of(context).pushNamed(DetailContact.nameRoute,
@@ -178,69 +180,6 @@ class _MyContactsState extends State<MyContacts> {
               ),
             );
           }),
-      // body: ListView.separated(
-      //   itemCount: filteredContact.length,
-      //   separatorBuilder: (context, index) {
-      //     return Padding(
-      //       padding: const EdgeInsets.symmetric(horizontal: 27),
-      //       child: Container(child: Text("A")),
-      //     );
-      //   },
-      //   itemBuilder: (context, index) {
-      // return Padding(
-      //   padding: const EdgeInsets.symmetric(horizontal: 10),
-      //   child: ListTile(
-      //     onLongPress: () {
-      //       Navigator.of(context).pushNamed(DetailContact.nameRoute,
-      //           arguments: filteredContact[index].phone);
-      //     },
-      //     leading: Container(
-      //       decoration: BoxDecoration(
-      //           color: Color(0xffC4C4C4),
-      //           borderRadius: BorderRadius.circular(20)),
-      //       child: CachedNetworkImage(
-      //         width: 40,
-      //         imageUrl: filteredContact[index].image != null
-      //             ? filteredContact[index].image.toString()
-      //             : "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png",
-      //         progressIndicatorBuilder: (context, url, downloadProgress) =>
-      //             CircularProgressIndicator(
-      //                 value: downloadProgress.progress),
-      //         errorWidget: (context, url, error) => Icon(Icons.error),
-      //       ),
-      //     ),
-      //     title: Text(filteredContact[index].name.toString()),
-      //     subtitle: Text(filteredContact[index].phone.toString()),
-      //     trailing: GestureDetector(
-      //       onTap: () async {
-      //         await DatabaseHelper.instance
-      //             .add(GetContact(
-      //           id: filteredContact[index].id,
-      //           name: filteredContact[index].name,
-      //           phone: filteredContact[index].phone,
-      //           email: filteredContact[index].email,
-      //           company: filteredContact[index].company,
-      //           job: filteredContact[index].job,
-      //           image: filteredContact[index].image,
-      //         ))
-      //             .then((_) {
-      //           setState(() {
-      //             getContact();
-      //           });
-      //           print("Berhasil menambah favorit");
-      //         });
-      //       },
-      //       child: isFav(index)
-      //           ? Icon(
-      //               Icons.grade_sharp,
-      //               color: Colors.amber,
-      //             )
-      //           : Icon(Icons.grade_outlined),
-      //     ),
-      //   ),
-      // );
-      //   },
-      // ),
     );
   }
 }

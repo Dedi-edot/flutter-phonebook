@@ -13,6 +13,10 @@ class Contacts with ChangeNotifier {
     return _contactList.firstWhere((element) => element.phone == phone);
   }
 
+  findFirstName(String substring) {
+    return _contactList.firstWhere((element) => element.name[0] == substring);
+  }
+
   Future<void> initialData(String token) async {
     String url = "https://phone-book-api.herokuapp.com/api/v1/contacts";
     List<GetContact> allContacts;
@@ -37,26 +41,21 @@ class Contacts with ChangeNotifier {
 
   filterContact(String val) {
     List<GetContact> filteredContact = [];
-    // List<Map<String, dynamic>> groupingContact = [];
+    var filterText = val.toLowerCase();
     if (val.length > 0) {
       filteredContact = [];
       contactList.forEach((contact) {
-        if (contact.name.toString().contains(val) ||
+        if (contact.name.toLowerCase().contains(filterText) ||
             contact.phone.contains(val)) {
           filteredContact.add(contact);
         }
       });
       print(filteredContact);
+      filteredContact.sort((a, b) => a.name.compareTo(b.name));
       return filteredContact;
-      // if (filteredContact.length > 0) {
-      //   return filteredContact.sort((a, b) => a.name.compareTo(b.name));
-      // } else {
-      //   return filteredContact;
-      // }
     } else {
+      contactList.sort((a, b) => a.name.compareTo(b.name));
       return contactList;
     }
   }
 }
-
-// .sort((a, b) => a.name.compareTo(b.name));
