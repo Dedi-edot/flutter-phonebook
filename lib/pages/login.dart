@@ -33,7 +33,6 @@ class _LoginPageState extends State<LoginPage> {
 
     prefs.setString('token', data.token).then((value) {
       Timer(Duration(seconds: 1), () => autoLogin());
-      Navigator.of(context).pushReplacementNamed(HomePage.nameRoute);
     });
   }
 

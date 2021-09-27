@@ -37,16 +37,26 @@ class Contacts with ChangeNotifier {
 
   filterContact(String val) {
     List<GetContact> filteredContact = [];
+    // List<Map<String, dynamic>> groupingContact = [];
     if (val.length > 0) {
+      filteredContact = [];
       contactList.forEach((contact) {
-        if (contact.name!.contains(val) || contact.phone!.contains(val)) {
+        if (contact.name.toString().contains(val) ||
+            contact.phone.contains(val)) {
           filteredContact.add(contact);
         }
       });
+      print(filteredContact);
       return filteredContact;
+      // if (filteredContact.length > 0) {
+      //   return filteredContact.sort((a, b) => a.name.compareTo(b.name));
+      // } else {
+      //   return filteredContact;
+      // }
     } else {
       return contactList;
     }
   }
-
 }
+
+// .sort((a, b) => a.name.compareTo(b.name));

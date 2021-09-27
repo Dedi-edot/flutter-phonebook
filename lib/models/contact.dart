@@ -1,8 +1,8 @@
 class GetContact {
     GetContact({
         this.id,
-        this.name,
-        this.phone,
+        required this.name,
+        required this.phone,
         this.job,
         this.company,
         this.image,
@@ -10,8 +10,8 @@ class GetContact {
     });
 
     int? id;
-    String? name;
-    String? phone;
+    String name;
+    String phone;
     String? job;
     String? company;
     String? image;
